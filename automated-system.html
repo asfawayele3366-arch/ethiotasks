@@ -1,24 +1,24 @@
-html<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="am">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>100% አውቶማቲክ የማስታወቂያ እና ኮሚሽን ሲስተም</title>
+    <title>አውቶማቲክ የማስታወቂያ እና ኮሚሽን መድረክ</title>
     <style>
-        body { font-family: sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; text-align: center; }
-        .main-container { max-width: 600px; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        body { font-family: Sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; text-align: center; }
+        .main-container { max-width: 600px; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         .header { background: #007bff; color: white; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
         .section { border: 1px solid #ddd; padding: 15px; margin: 15px 0; border-radius: 8px; background: #fafbfc; text-align: left; }
         input, select { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
-        .btn-post { background: #007bff; color: white; border: none; padding: 12px; border-radius: 5px; cursor: pointer; width: 100%; font-weight: bold; }
-        .ad-card { border-left: 5px solid #28a745; background: #eef5ff; padding: 15px; margin: 10px 0; border-radius: 4px; }
-        .btn-watch { background: #28a745; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; float: right; font-weight: bold; }
-        .btn-watch:disabled { background: #cccccc; }
+        .btn-post { background: #007bff; color: white; border: none; padding: 12px; border-radius: 5px; cursor: pointer; width: 100%; font-size: 16px; font-weight: bold; }
+        .ad-card { border-left: 5px solid #28a745; background: #eef5ff; padding: 15px; margin: 10px 0; border-radius: 4px; text-align: left; }
+        .btn-watch { background: #28a745; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; }
         .dashboard-grid { display: flex; justify-content: space-between; margin-top: 20px; }
         .db-box { width: 48%; padding: 15px; border-radius: 6px; text-align: center; color: white; font-weight: bold; }
         .camilo { background: #17a2b8; }
         .yilik { background: #28a745; }
         .counter { font-size: 22px; display: block; margin-top: 5px; }
+        .pay-btn { display: inline-block; background: #0088cc; color: white; text-decoration: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; margin-top: 10px; text-align: center; width: 93%; }
     </style>
 </head>
 <body>
@@ -26,43 +26,46 @@ html<!DOCTYPE html>
 <div class="main-container">
     <div class="header">
         <h2>አውቶማቲክ የማስታወቂያ እና ኮሚሽን መድረክ</h2>
-        <p>ሲስተሙ ያለ ሰው ጣልቃ ገብነት ስራዎችን እና ኮሚሽንን በራሱ ይቆጣጠራል</p>
+        <p>ማስታወቂያዎችን በነፃ ይለጥፉ፣ ከእይታዎች በኮሚሽን ክፍያ ያግኙ!</p>
     </div>
 
     <!-- 1. ማስታወቂያ መለጠፊያ ፎርም -->
     <div class="section">
-        <h3>📌 አዲስ ማስታወቂያ መለጠፊያ (ፎርም)</h3>
+        <h3>➕ አዲስ ማስታወቂያ መለጠፊያ (ፎርም)</h3>
         <form id="adForm" onsubmit="postAdAutomatically(event)">
-            <input type="text" id="adTitleInput" placeholder="የማስታወቂያው ርዕስ (ለምሳሌ፡ ቪዲዮ እዩልኝ)" required>
-            <input type="url" id="adLinkInput" placeholder="የቪዲዮ ወይም የቴሌግራም ቻናል ሊንክ" required>
+            <input type="text" id="adTitleInput" placeholder="የማስታወቂያው ርዕስ (ለምሳሌ፡ የቪዲዮ አፕ)" required>
+            <input type="url" id="adLinkInput" placeholder="የቪዲዮ ወይም የማስታወቂያ ሊንክ (URL)" required>
             <select id="adPlatform">
-                <option value="YouTube">YouTube (ሰብስክራይብ/እይታ)</option>
-                <option value="TikTok">TikTok (ላይክ/እይታ)</option>
-                <option value="Telegram">Telegram (ቻናል መቀላቀል)</option>
+                <option value="YouTube">YouTube (ዩቲዩብ)</option>
+                <option value="TikTok">TikTok (ቲክቶክ)</option>
+                <option value="Telegram">Telegram (ቴሌግራም ቻናል/ቦት)</option>
             </select>
-            <input type="number" id="adBudget" placeholder="ለማስታወቂያው የተመደበ በጀት ($)" step="0.01" required>
-            <button type="submit" class="btn-post">ማስታወቂያውን በራስ-ሰር ልጥፍ</button>
+            <input type="number" id="adBudgetInput" placeholder="ለማስታወቂያው የተመደበ በጀት ($)" step="0.01" required>
+            <button type="submit" class="btn-post">🚀 ማስታወቂያውን በነፃ ልጥፍ</button>
         </form>
+
+        <!-- የክፍያ መመሪያ እና የቀጥታ ቴሌግራም ማገናኛ አዝራር -->
         <div style="background-color: #fff9e6; padding: 15px; border-radius: 5px; margin-top: 15px; text-align: left; border: 1px solid #ffe0b2;">
-    <h4 style="color: #cc7a00; margin: 0 0 5px 0;">💳 የክፍያ መመሪያ (Payment Instruction)</h4>
-    <p style="margin: 0; font-size: 14px; color: #555;">ማስታወቂያዎ እንዲጸድቅ እባክዎ የቪው (View) ክፍያውን በቴሌብር (telebirr) ወይም በኢትዮጵያ ንግድ ባንክ (CBE) ይላኩ። ከዚያ የክፍያ ደረሰኝ ስክሪንሻት ለሳይቱ አስተዳዳሪ በቴሌግራም ይላኩ።</p>
-</div>
+            <h4 style="color: #cc7a00; margin: 0 0 5px 0;">💳 የክፍያ መመሪያ (Payment Instruction)</h4>
+            <p style="margin: 0; font-size: 14px; color: #555;">ማስታወቂያዎ በራስ-ሰር እንዲጸድቅ እባክዎ የቪው (View) ክፍያውን በቴሌብር (telebirr) ወይም በባንክ ይላኩ። ከዚያ የክፍያ ደረሰኙን ስክሪንሻት ከታች ያለውን አዝራር በመጫን ለሳይቱ አስተዳዳሪ በቀጥታ ይልኩ።</p>
+            <a href="https://t.me" target="_blank" class="pay-btn">💬 ክፍያ ፈጽሜያለሁ (ደረሰኝ ላክ)</a>
+        </div>
     </div>
 
     <!-- 2. የሚታዩ ማስታወቂያዎች -->
     <div class="section">
-        <h3>📺 የሚገኙ ማስታወቂያዎች (ለሰራተኞች)</h3>
+        <h3>📺 የሚታዩ ማስታወቂያዎች (ለሰራተኞች)</h3>
         <div id="adListContainer">
             <div class="ad-card" id="sampleAd">
-                <button class="btn-watch" onclick="startAdTimer(this, 0.50, 'sampleAd')">ስራውን ጀምር</button>
-                <h4>የዩቲዩብ ቪዲዮ በማየት ሳንቲም ይሰብስቡ</h4>
+                <button class="btn-watch" onclick="startAdTimer(this, 0.50, 'sampleAd')">▶️ ማየት ጀምር</button>
+                <h4>የቪዲዮ ማስታወቂያ</h4>
                 <p>በጀት: <span style="color:#28a745; font-weight:bold;">$0.50</span> | መድረክ: YouTube</p>
                 <div class="timer-display" style="color: #ffc107; font-weight: bold; margin-top: 5px;"></div>
             </div>
         </div>
     </div>
 
-    <!-- 3. በራሱ የሚቆጥረው የቁጥጥር ሰሌዳ (Dashboards) -->
+    <!-- 3. የአስተዳዳሪ ሰሌዳ -->
     <div class="section">
         <h3>📊 ዋና የቁጥጥር ሰሌዳ (Admin Dashboard)</h3>
         <div class="dashboard-grid">
@@ -71,7 +74,7 @@ html<!DOCTYPE html>
                 <span id="camiloViews" class="counter">0</span>
             </div>
             <div class="db-box yilik">
-                Yilik (የእርስዎ ኮሚሽን 10%)
+                Yilik (የአንተ ኮሚሽን 10%)
                 <span id="yilikCommission" class="counter">$0.00</span>
             </div>
         </div>
@@ -81,50 +84,46 @@ html<!DOCTYPE html>
 <script>
     let totalVerifiedViews = 0;
     let totalOwnerCommission = 0.00;
-    const commissionPercent = 0.10; // የ 10% የኮሚሽን ህግ
+    const commissionPercent = 0.10; // 10% ኮሚሽን
 
     function postAdAutomatically(event) {
         event.preventDefault();
         let title = document.getElementById("adTitleInput").value;
         let link = document.getElementById("adLinkInput").value;
         let platform = document.getElementById("adPlatform").value;
-        let budget = parseFloat(document.getElementById("adBudget").value);
+        let budget = parseFloat(document.getElementById("adBudgetInput").value);
         let adId = "ad_" + Date.now();
 
-        let adCardHTML = `
+        let adCardHtml = `
             <div class="ad-card" id="${adId}">
-                <button class="btn-watch" onclick="startAdTimer(this, ${budget}, '${adId}')">ስራውን ጀምር</button>
+                <button class="btn-watch" onclick="startAdTimer(this, ${budget}, '${adId}')">▶️ ማየት ጀምር</button>
                 <h4>${title}</h4>
                 <p>በጀት: <span style="color:#28a745; font-weight:bold;">$${budget.toFixed(2)}</span> | መድረክ: ${platform}</p>
+                <p><a href="${link}" target="_blank" style="color: #007bff; text-decoration: none;">🔗 ማስታወቂያውን እዚህ ይክፈቱ</a></p>
                 <div class="timer-display" style="color: #ffc107; font-weight: bold; margin-top: 5px;"></div>
-            </div>`;
-
-        document.getElementById("adListContainer").insertAdjacentHTML('beforeend', adCardHTML);
+            </div>
+        `;
+        document.getElementById("adListContainer").insertAdjacentHTML('beforeend', adCardHtml);
         document.getElementById("adForm").reset();
+        alert("ማስታወቂያዎ በተሳካ ሁኔታ ተመዝግቧል! ክፍያዎ ሲረጋገጥ ወዲያውኑ ወደ ስራ ይገባል።");
     }
 
-    function startAdTimer(button, adBudget, adCardId) {
+    function startAdTimer(button, budget, adId) {
         button.disabled = true;
-        let timeLeft = 10;
-        let card = document.getElementById(adCardId);
-        let timerDisplay = card.querySelector(".timer-display");
+        let timerDisplay = document.getElementById(adId).querySelector(".timer-display");
+        let timeLeft = 10; // ለ10 ሰከንድ ማየት
 
-        window.open("https://youtube.com", "_blank");
-
-        let interval = setInterval(function() {
+        let countdown = setInterval(function() {
             timeLeft--;
-            timerDisplay.innerText = "⏳ ሲስተሙ እያረጋገጠ ነው... " + timeLeft + " ሰከንድ ቀረ";
-
+            timerDisplay.innerText = `⏱️ እባክዎ ይጠብቁ: ${timeLeft} ሰከንድ`;
             if (timeLeft <= 0) {
-                clearInterval(interval);
-                timerDisplay.innerText = "✅ ጸድቋል! የኮሚሽን ገንዘብዎ ገብቷል።";
-                timerDisplay.style.color = "#28a745";
-                
+                clearInterval(countdown);
+                timerDisplay.innerText = "✅ እይታው ተረጋግጧል!";
                 totalVerifiedViews++;
                 document.getElementById("camiloViews").innerText = totalVerifiedViews;
 
-                let calculatedCommission = adBudget * commissionPercent;
-                totalOwnerCommission += calculatedCommission;
+                let earnedCommission = budget * commissionPercent;
+                totalOwnerCommission += earnedCommission;
                 document.getElementById("yilikCommission").innerText = "$" + totalOwnerCommission.toFixed(2);
             }
         }, 1000);
