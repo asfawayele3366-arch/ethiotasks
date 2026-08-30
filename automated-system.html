@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>አውቶማቲክ የማስታወቂያ እና ኮሚሽን መድረክ</title>
+    <title>EthioTasks - ኢትዮታስክስ የማስታወቂያ እና የኮሚሽን መድረክ</title>
     <style>
         body { font-family: Sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; text-align: center; }
         .main-container { max-width: 600px; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .header { background: #007bff; color: white; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+        .header { background: #ff9900; color: white; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
         .section { border: 1px solid #ddd; padding: 15px; margin: 15px 0; border-radius: 8px; background: #fafbfc; text-align: left; }
         input, select { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
-        .btn-post { background: #007bff; color: white; border: none; padding: 12px; border-radius: 5px; cursor: pointer; width: 100%; font-size: 16px; font-weight: bold; }
+        .btn-post { background: #ff9900; color: white; border: none; padding: 12px; border-radius: 5px; cursor: pointer; width: 100%; font-size: 16px; font-weight: bold; }
         .ad-card { border-left: 5px solid #28a745; background: #eef5ff; padding: 15px; margin: 10px 0; border-radius: 4px; text-align: left; }
         .btn-watch { background: #28a745; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; }
         .dashboard-grid { display: flex; justify-content: space-between; margin-top: 20px; }
@@ -25,7 +25,7 @@
 
 <div class="main-container">
     <div class="header">
-        <h2>አውቶማቲክ የማስታወቂያ እና ኮሚሽን መድረክ</h2>
+        <h2>EthioTasks (ኢትዮታስክስ)</h2>
         <p>ማስታወቂያዎችን በነፃ ይለጥፉ፣ ከእይታዎች በኮሚሽን ክፍያ ያግኙ!</p>
     </div>
 
@@ -47,7 +47,7 @@
         <!-- የክፍያ መመሪያ እና የቀጥታ ቴሌግራም ማገናኛ አዝራር -->
         <div style="background-color: #fff9e6; padding: 15px; border-radius: 5px; margin-top: 15px; text-align: left; border: 1px solid #ffe0b2;">
             <h4 style="color: #cc7a00; margin: 0 0 5px 0;">💳 የክፍያ መመሪያ (Payment Instruction)</h4>
-            <p style="margin: 0; font-size: 14px; color: #555;">ማስታወቂያዎ በራስ-ሰር እንዲጸድቅ እባክዎ የቪው (View) ክፍያውን በቴሌብር (telebirr) ወይም በባንክ ይላኩ። ከዚያ የክፍያ ደረሰኙን ስክሪንሻት ከታች ያለውን አዝራር በመጫን ለሳይቱ አስተዳዳሪ በቀጥታ ይልኩ።</p>
+            <p style="margin: 0; font-size: 14px; color: #555;">ማስታወቂያዎ በራስ-ሰር እንዲጸድቅ እባክዎ የቪው (View) ክፍያውን በቴሌብር (telebirr) ወይም በባንክ ይላኩ። ከዚያ የክፍያ ደረሰኙን ስክሪንሻት ከታች ያለውን አዝራር በመጫን ለEthioTasks ማናጀር በቀጥታ ይልኩ።</p>
             <a href="https://t.me" target="_blank" class="pay-btn">💬 ክፍያ ፈጽሜያለሁ (ደረሰኝ ላክ)</a>
         </div>
     </div>
@@ -69,12 +69,12 @@
     <div class="section">
         <h3>📊 ዋና የቁጥጥር ሰሌዳ (Admin Dashboard)</h3>
         <div class="dashboard-grid">
-            <div class="db-box camilo">
-                Camilo (እይታ ቁጥጥር)
+            <div class="db-box min-views" style="background-color: #17a2b8;">
+                የእይታ ቁጥጥር
                 <span id="camiloViews" class="counter">0</span>
             </div>
-            <div class="db-box yilik">
-                Yilik (የአንተ ኮሚሽን 10%)
+            <div class="db-box ethio-comm" style="background-color: #28a745;">
+                የእርስዎ ኮሚሽን (10%)
                 <span id="yilikCommission" class="counter">$0.00</span>
             </div>
         </div>
@@ -105,13 +105,13 @@
         `;
         document.getElementById("adListContainer").insertAdjacentHTML('beforeend', adCardHtml);
         document.getElementById("adForm").reset();
-        alert("ማስታወቂያዎ በተሳካ ሁኔታ ተመዝግቧል! ክፍያዎ ሲረጋገጥ ወዲያውኑ ወደ ስራ ይገባል።");
+        alert("ማስታወቂያዎ በተሳካ ሁኔታ በ EthioTasks ተመዝግቧል! ክፍያዎ ሲረጋገጥ ወዲያውኑ ወደ ስራ ይገባል።");
     }
 
     function startAdTimer(button, budget, adId) {
         button.disabled = true;
         let timerDisplay = document.getElementById(adId).querySelector(".timer-display");
-        let timeLeft = 10; // ለ10 ሰከንድ ማየት
+        let timeLeft = 10;
 
         let countdown = setInterval(function() {
             timeLeft--;
