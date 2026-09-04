@@ -41,46 +41,159 @@
 </div>
 
 <script>
+// ከGoogle Sheets ያገኘኸውን የWeb App URL ሊንክ እዚህ ጥቅስ ምልክት ውስጥ ተካው
+const GOOGLE_SCRIPT_URL = "YOUR_GOOGLE_WEB_APP_URL_HERE"; 
+
 function toggleAuth(showRegister) {
-    const loginForm = document.getElementById("loginForm");
-    const registerForm = document.getElementById("registerForm");
-    const authTitle = document.getElementById("authTitle");
-    const toggleLink = document.getElementById("toggleAuthLink");
-    if (showRegister) {
-        loginForm.style.display = "none";
-        registerForm.style.display = "block";
-        authTitle.innerText = "አዲስ አካውንት መክፈቻ (Register)";
-        toggleLink.innerText = "አካውንት አለዎት? ይግቡ (Login)";
-        toggleLink.setAttribute("onclick", "toggleAuth(false)");
-    } else {
-        loginForm.style.display = "block";
-        registerForm.style.display = "none";
-        authTitle.innerText = "ወደ አካውንትዎ ይግቡ (Login)";
-        toggleLink.innerText = "አዲስ አካውንት ለመክፈት እዚህ ይጫኑ";
-        toggleLink.setAttribute("onclick", "toggleAuth(true)");
-    }
+  const loginForm = document.getElementById("loginForm");
+  const registerForm = document.getElementById("registerForm");
+  const authTitle = document.getElementById("authTitle");
+  const toggleLink = document.getElementById("toggleAuthLink");
+  if (showRegister) {
+    loginForm.style.display = "none";
+    registerForm.style.display = "block";
+    authTitle.innerText = "አዲስ አካውንት መመዝገቢያ (Register)";
+    toggleLink.innerText = "አካውንት አለዎት? ይግቡ (Login)";
+    toggleLink.setAttribute("onclick", "toggleAuth(false)");
+  } else {
+    loginForm.style.display = "block";
+    registerForm.style.display = "none";
+    authTitle.innerText = "ወደ አካውንትዎ ይግቡ (Login)";
+    toggleLink.innerText = "አዲስ አካውንት ለመክፈት እዚህ ይጫኑ";
+    toggleLink.setAttribute("onclick", "toggleAuth(true)");
+  }
 }
+
 function handleRegister(event) {
-    event.preventDefault();
-    const user = document.getElementById("regUsername").value;
-    const phone = document.getElementById("regPhone").value;
-    const pass = document.getElementById("regPassword").value;
-    fetch(GOOGLE_SCRIPT_URL, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "register", username: user, phone: phone, password: pass })
-    }).then(() => {
-        alert("ምዝገባው ተሳክቷል! አሁን መግባት ይችላሉ።");
-        toggleAuth(false);
-    });
+  event.preventDefault();
+  const user = document.getElementById("regUsername").value;
+  const phone = document.getElementById("regPhone").value;
+  const pass = document.getElementById("regPassword").value;
+  
+  fetch(GOOGLE_SCRIPT_URL, {
+    method: "POST",
+    mode: "cors", 
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ action: "register", username: user, phone: phone, password: pass })
+  })
+  .then(response => response.json())
+  .then(data => {
+    alert("🎉 " + data.message);
+    toggleAuth(false);
+  })
+  .catch(error => alert("የመረብ ግንኙነት ችግር አጋጥሟል!"));
 }
+
 function handleLogin(event) {
-    event.preventDefault();
-    const user = document.getElementById("loginUsername").value;
-    localStorage.setItem("ethioTasksUser", user);
-    document.getElementById("authSection").innerHTML = `<h3>እንኳን ደህና መጡ፣ <b>${user}</b> 👋</h3><p>አሁን ማስታወቂያ መለጠፍና መስራት ይችላሉ።</p>`;
+  event.preventDefault();
+  const user = document.getElementById("loginUsername").value;
+  const pass = document.getElementById("loginPassword").value; 
+  
+  fetch(GOOGLE_SCRIPT_URL, {
+    method: "POST",
+    mode: "cors",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ action: "login", username: user, password: pass })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if(data.status === "success") {
+      localStorage.setItem("ethioTasksUser", user);
+      document.getElementById("authSection").innerHTML = `<h3>እሺ እባክዎ ደህና መጡ <b>${user}</b> </h3> <p> ቀሪ ሂሳብዎ፦ ${data.balance} ብር </p>`;
+    } else {
+      alert("⚠️ " + data.message);
+    }
+  })
+  .catch(error => alert("የመረብ ግንኙነት ችግር አጋጥሟል!"));
 }
+
+function postAdAutomatically(event) {
+  event.preventDefault(); 
+  const username = localStorage.getItem("ethioTasksUser"); 
+  
+  if (!username) {
+    alert("⚠️ እባክዎ ማስታወቂያ ለመለጠፍ መጀመሪያ ወደ አካውንትዎ ይግቡ (Login)!");
+    return;
+  }
+  
+  const totalBudget = parseFloat(document.getElementById("adBudgetInput").value); 
+  
+  if (isNaN(totalBudget) || totalBudget <= 0) {
+    alert("⚠️ እባክዎ ትክክለኛ የበጀት መጠን ያስገቡ!");
+    return;
+  }
+
+  fetch(GOOGLE_SCRIPT_URL, {
+    method: "POST",
+    mode: "cors",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ action: "postAd", username: username, adCost: totalBudget })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.status === "success") {
+      alert("🎉 ማስታወቂያው በተሳካ ሁኔታ ተለጥፏል!\nየቀረው የሂሳብ መጠንዎ፦ " + data.remainingBalance + " ብር");
+      window.location.reload(); 
+    } else {
+      alert("⚠️ ስህተት፦ " + data.message);
+    }
+  })
+  .catch(error => alert("የመረብ ግንኙነት ችግር አጋጥሟል!"));
+}// ⏱️ ማስታወቂያ አይቶ ሲጨርስ ብር የሚጨምር ፋንክሽን
+function startAdTimer(seconds, adId, rewardAmount) {
+  let timeLeft = seconds;
+  const timerDisplay = document.getElementById("timer-display-" + adId);
+  
+  if (timerDisplay) {
+    timerDisplay.style.display = "block";
+  }
+
+  const countdown = setInterval(() => {
+    timeLeft--;
+    if (timerDisplay) {
+      timerDisplay.innerText = "እባክዎ ለ " + timeLeft + " ሰከንድ ይጠብቁ...";
+    }
+
+    if (timeLeft <= 0) {
+      clearInterval(countdown);
+      if (timerDisplay) {
+        timerDisplay.innerText = "ተጠናቋል! ብር በመደመር ላይ...";
+      }
+
+      // በአሁኑ ሰዓት ማስታወቂያ እያየ ያለውን ተጠቃሚ ስም ከlocalStorage ማግኘት
+      const username = localStorage.getItem("ethioTasksUser");
+
+      if (!username) {
+        alert("⚠️ ማሳሰቢያ፦ ብር ለማግኘት መጀመሪያ መግባት (Login) ነበረብዎት!");
+        return;
+      }
+
+      // ወደ Google Sheets የሂሳብ መጨመሪያ ዳታ መላክ
+      fetch(GOOGLE_SCRIPT_URL, {
+        method: "POST",
+        mode: "cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "updateBalance", // ቅድም Google Script ላይ የሰራነው አክሽን
+          username: username,
+          reward: rewardAmount // የሚደመረው የብር መጠን
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === "success") {
+          alert("🎉 እንኳን ደስ አለዎት! " + rewardAmount + " ብር ወደ አካውንትዎ ተደምሯል።\nአዲሱ ቀሪ ሂሳብዎ፦ " + data.newBalance + " ብር");
+          window.location.reload();
+        } else {
+          alert("⚠️ ስህተት፦ " + data.message);
+        }
+      })
+      .catch(error => {
+        console.error("Error:", error);
+        alert("የመረብ ችግር አጋጥሟል፣ ብሩ አልተደመረም።");
+      });
+    }
+  }, 1000);
 </script>
 <div class="main-container">
     <header>
