@@ -39,7 +39,43 @@
         <a href="javascript:void(0)" id="toggleAuthLink" onclick="toggleAuth(true)">አዲስ አካውንት ለመክፈት እዚህ ይጫኑ</a>
     </p>
 </div>
+<!-- አዲስ ማስታወቂያ ማስጠኛ ፎርም ክፍል -->
+<div class="main-container" id="adSection" style="margin-top: 20px; background: white; padding: 20px; border-radius: 8px;">
+    <h3>+ አዲስ ማስታወቂያ ማስጠኛ</h3>
+    <form id="adForm" onsubmit="submitAdvertisement(event)">
+        <input type="text" id="adTitle" placeholder="የማስታወቂያ ርዕስ (ለምሳሌ፦ የኛ ቻናል)" required style="width:100%; padding:8px; margin:5px 0;">
+        <input type="url" id="adUrl" placeholder="የማስታወቂያ ሊንክ/URL" required style="width:100%; padding:8px; margin:5px 0;">
+        
+        <label style="display:block; margin-top:10px; font-weight:bold;">የሶሻል ሚዲያ አይነት ይምረጡ፡</label>
+        <select id="mediaType" style="width:100%; padding:8px; margin:5px 0;">
+            <option value="YouTube">YouTube ቪዲዮ</option>
+            <option value="TikTok">TikTok ቪዲዮ</option>
+            <option value="Telegram">Telegram ቻናል</option>
+        </select>
 
+        <label style="display:block; margin-top:10px; font-weight:bold;">የእይታ ሰከንድ ይምረጡ፡</label>
+        <select id="adDuration" style="width:100%; padding:8px; margin:5px 0;">
+            <option value="10">10 ሰከንድ</option>
+            <option value="20">20 ሰከንድ</option>
+            <option value="40">40 ሰከንድ</option>
+            <option value="90">90 ሰከንድ</option>
+        </select>
+
+        <label style="display:block; margin-top:10px; font-weight:bold;">ለአንድ ሰራተኛ የሚከፈለውን ዋጋ ይምረጡ (በብር)፡</label>
+        <select id="workerPay" style="width:100%; padding:8px; margin:5px 0;">
+            <option value="0.10">0.10 ሳንቲም</option>
+            <option value="0.25">0.25 ሳንቲም</option>
+            <option value="0.50">0.50 ሳንቲም</option>
+            <option value="1.00">1.00 ብር</option>
+            <option value="2.00">2.00 ብር</option>
+            <option value="3.00">3.00 ብር</option>
+            <option value="5.00">5.00 ብር</option>
+        </select>
+
+        <input type="number" id="totalBudget" placeholder="አጠቃላይ ለማስታወቂያው የተመደበ በጀት (በብር)" required style="width:100%; padding:8px; margin:5px 0;">
+        <button type="submit" style="width:100%; padding:10px; background:#ff9800; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">ማስታወቂያውን አሁን ልቀቅ</button>
+    </form>
+</div>
 <script>
 // ከGoogle Sheets ያገኘኸውን የWeb App URL ሊንክ እዚህ ጥቅስ ምልክት ውስጥ ተካው
 const GOOGLE_SCRIPT_URL = https://script.google.com/macros/s/AKfycbwmqek-eFIUyKfxCfL3D8rXTFKIdfekyQhYQrJU-LXc1KErXwG42_v0XVk2uUoPf5UpVw/exec
@@ -63,7 +99,102 @@ function toggleAuth(showRegister) {
     toggleLink.setAttribute("onclick", "toggleAuth(true)");
   }
 }
+// አዲስ ማስታወቂያ በ 10% ኮሚሽን እና በነጻ መለጠፊያ ህግ
+function submitAdvertisement(event) {
+    event.preventDefault();
+    const loggedInUser = localStorage.getItem("loggedInUser");
+    
+    if (!loggedInUser) {
+        alert("ማስታወቂያ ለመለጠፍ እባክዎ መጀመሪያ ይግቡ!");
+        return;
+    }
 
+    const title = document.getElementById("adTitle").value;
+    const url = document.getElementById("adUrl").value;
+    const mediaType = document.getElementById("mediaType").value;
+    const workerPay = parseFloat(document.getElementById("workerPay").value); // የብር መጠን (0.10, 1.00, 3.00)
+    const duration = document.getElementById("adDuration").value;
+    const totalBudget = parseFloat(document.getElementById("totalBudget").value);
+    const taskId = "ET-" + Math.floor(100000 + Math.random() * 900000);
+
+    const adData = {
+        action: "submitAd",
+        username: loggedInUser,
+        taskId: taskId,
+        title: title,
+        url: url,
+        mediaType: mediaType,
+        workerPay: workerPay,
+        duration: duration,
+        totalBudget: totalBudget
+    };
+
+    // የገባው አካውንት 'admin' ከሆነ ያለምንም ክፍያ በቀጥታ በነጻ ይለጠፋል
+    if (loggedInUser === "admin") {
+        adData.totalBudget = 0;
+        sendAdToGoogleSheets(adData);
+    } else {
+        // ለሌላ ተጠቃሚ ከሆነ 10% ኮሚሽኑን በራስ-ሰር ያሰላል
+        const commission = totalBudget * 0.10;
+        const finalPayable = totalBudget + commission;
+        
+        if (confirm(`የማስታወቂያ በጀት፦ ${totalBudget} ብር\nየሲስተም 10% ኮሚሽን፦ ${commission} ብር\nአጠቃላይ ክፍያ፦ ${finalPayable} ብር\n\nክፍያውን በራስ-ሰር ፈጽመው ለመለጠፍ እሺ ይበሉ?`)) {
+            sendAdToGoogleSheets(adData);
+        }
+    }
+}
+
+function sendAdToGoogleSheets(adData) {
+    fetch(GOOGLE_SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(adData)
+    })
+    .then(() => {
+        alert("ማስታወቂያዎ ሙሉ በሙሉ በራስ-ሰር ፅድቆ ስራ ላይ ውሏል!");
+        location.reload();
+    })
+    .catch(error => console.error("ስህተት፦", error));
+}
+
+// ሰራተኛው "ማየት ጀምር" ሲል ሰከንዱን ቆጥሮ ባላንስ የሚጨምር አውቶሜሽን
+function startWatchingTask(taskId, videoUrl, duration, rewardAmount) {
+    const loggedInUser = localStorage.getItem("loggedInUser");
+    if (!loggedInUser) {
+        alert("ለመስራት እባክዎ መጀመሪያ ይግቡ!");
+        return;
+    }
+
+    window.open(videoUrl, "_blank"); // ቪዲዮውን በአዲስ ታብ ይከፍታል
+    let timeLeft = parseInt(duration); // የተመረጠው የእይታ ሰከንድ
+
+    alert("ማስታወቂያው ተከፍቷል! እባክዎ ለ " + timeLeft + " ሰከንድ ሳይዘጉ ይቆዩ።");
+
+    countdownTimer = setInterval(() => {
+        timeLeft--;
+        if (timeLeft <= 0) {
+            clearInterval(countdownTimer);
+            // ሰከንዱ ሲያልቅ የተወሰነውን የብር መጠን በራሱ ጊዜ ይጨምራል
+            claimTaskReward(loggedInUser, rewardAmount, taskId);
+        }
+    }, 1000);
+}
+
+function claimTaskReward(username, amount, taskId) {
+    fetch(GOOGLE_SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "claimReward", username: username, amount: amount, taskId: taskId })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === "success") {
+            alert(`🎉 እንኳን ደስ አለዎት! ታስኩን ጨርሰዋል። ${amount} ብር ተጨምሮልዎታል። አዲሱ ባላንስዎ፦ ${data.newBalance} ብር ነው።`);
+            localStorage.setItem("userBalance", data.newBalance);
+            location.reload();
+        }
+    });
+}
 function handleRegister(event) {
   event.preventDefault();
   const user = document.getElementById("regUsername").value;
@@ -207,182 +338,3 @@ function startAdTimer(seconds, adId, rewardAmount) {
         <form id="adForm" onsubmit="postAdAutomatically(event)">
             <input type="text" id="adTitleInput" placeholder="የማስታወቂያው ርዕስ (ለምሳሌ፡ የእኔ ቻናል)" required>
             <input type="url" id="adLinkInput" placeholder="የማስታወቂያው ወይም የቻናሉ ሊንክ (URL)" required>
-            
-            <select id="adPlatform" required>
-                <option value="" disabled selected>የሶሻል ሚዲያ አይነት ይምረጡ</option>
-                <option value="YouTube ሰብስክራይብ">YouTube ሰብስክራይብ</option>
-                <option value="YouTube ቪዲዮ እይታ">YouTube ቪዲዮ እይታ</option>
-                <option value="YouTube ኮሜንት መጻፍ">YouTube ኮሜንት መጻፍ</option>
-                <option value="TikTok ፎሎው ማድረጊያ">TikTok ፎሎው ማድረጊያ</option>
-                <option value="TikTok ቪዲዮ እይታ">TikTok ቪዲዮ እይታ</option>
-                <option value="Telegram ቻናል ጆይን">Telegram ቻናል ጆይን</option>
-                <option value="Telegram 사이ት መጎብኘት">Telegram ሳይት መጎብኘት</option>
-            </select>
-
-            <!-- የእርስዎ ሙሉ የዋጋ ዝርዝር (ከ0.10 ሳንቲም እስከ 100 ብር) -->
-            <select id="adRewardInput" required>
-                <option value="" disabled selected>ለአንድ ሰራተኛ የሚከፈለውን ዋጋ ይምረጡ</option>
-                <option value="0.10">0.10 ብር (10 ሳንቲም)</option>
-                <option value="0.20">0.20 ብር (20 ሳንቲም)</option>
-                <option value="0.25">0.25 ብር (25 ሳንቲም)</option>
-                <option value="0.30">0.30 ብር (30 ሳንቲም)</option>
-                <option value="0.50">0.50 ብር (50 ሳንቲም)</option>
-                <option value="1.00">1.00 ብር (1 ብር)</option>
-                <option value="15.00">15.00 ብር (15 ብር)</option>
-                <option value="50.00">50.00 ብር (50 ብር)</option>
-                <option value="100.00">100.00 ብር (100 ብር)</option>
-            </select>
-
-            <input type="number" id="adBudgetInput" placeholder="አጠቃላይ ለማስታወቂያው የተመደበ በጀት (በብር)" step="0.01" required>
-            <button type="submit" class="btn-post">🚀 ማስታወቂያውን አሁኑኑ ልቀቅ</button>
-        </form>
-    </div>
-
-    <!-- 2. የክፍያ መመሪያ -->
-    <div class="section">
-        <h3>💳 የክፍያ መመሪያ (Payment Instruction)</h3>
-        <p style="font-size: 13px; color: #555;">ማስታወቂያው በራሱ እንዲነቃቃ ክፍያዎን በ<b>ቴሌብር (telebirr)</b> ወይም በባንክ ይፈጽሙ። የሰው ንክኪን ሙሉ በሙሉ ለማስቀረት ክፍያውን እንደፈጸሙ ከታች ያለውን ሊንክ በመጠቀም ደረሰኝዎን በChapa ወይም በክፍያ ቦታችን በኩል ያረጋግጡ።</p>
-        <a href="https://chapa.co" target="_blank"><button type="button" style="background: #007bff; color: white; font-weight: bold; width: 100%;">💳 ክፍያ ፈጽሜያለሁ (ክፍያ ማረጋገጫ ሊንክ)</button></a>
-    </div>
-
-    <!-- 3. የሚታዩ ማስታወቂያዎች -->
-    <div class="section">
-        <h3>📺 የሚታዩ ማስታወቂያዎች (ለሰራተኞች)</h3>
-        <div id="adListContainer">
-            <!-- ናሙና ታስክ -->
-            <div class="ad-card" id="sampleAd">
-                <button class="btn-watch" onclick="startAdTimer(this, 10, 'sampleAd', 0.50)">▶ ማየት ጀምር</button>
-                <h4>የናሙና የዩቲዩብ ታስክ</h4>
-                <p>አይነት፡ YouTube ቪዲዮ እይታ | ክፍያ፡ <span style="color: #28a745; font-weight: bold;">0.50 ብር</span> | በጀት፡ 50.00 ብር</p>
-                <a href="#" target="_blank" style="color: #007bff; text-decoration: none;">ቪዲዮውን ለመክፈት እዚህ ይጫኑ</a>
-                <div class="timer-display" style="display: none;">ቀሪ ሰዓት፡ <span>10</span> ሰከንድ...</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 4. ዋና የቁጥጥር ሰሌዳ -->
-    <div class="section">
-        <h3>📊 ዋና የቁጥጥር ሰሌዳ (Admin Dashboard)</h3>
-        <div class="dashboard-grid">
-            <div class="db-box bg-blue">
-                <p>የእይታ ቁጥር</p>
-                <h2 id="totalVerifiedViews">0</h2>
-            </div>
-            <div class="db-box bg-green">
-                <p>የእርስዎ ኮሚሽን (10%)</p>
-                <h2 id="totalCommission">0.00 ብር</h2>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-    let totalVerifiedViews = 0;
-    let totalOwnerCommission = 0.00;
-    const commissionPercent = 0.10; // የእርስዎ 10% ኮሚሽን
-
-    function postAdAutomatically(event) {
-        event.preventDefault();
-        
-        let title = document.getElementById("adTitleInput").value;
-        let link = document.getElementById("adLinkInput").value;
-        let platform = document.getElementById("adPlatform").value;
-        let reward = parseFloat(document.getElementById("adRewardInput").value);
-        let budget = parseFloat(document.getElementById("adBudgetInput").value);
-        let adId = "ad_" + Date.now();
-
-        // እንደ ዋጋው መጠን የሴኮንድ ቆይታን በራስ-ሰር መወሰን (የበለጠ ዋጋ ላለው ረዘም ያለ ሰከንድ)
-        let duration = 15;
-        if (reward <= 0.25) duration = 10;
-        else if (reward === 0.50) duration = 15;
-        else if (reward === 1.00) duration = 30;
-        else if (reward >= 15.00) duration = 60;
-
-        let adCardHtml = `
-            <div class="ad-card" id="${adId}">
-                <button class="btn-watch" onclick="startAdTimer(this, ${duration}, '${adId}', ${reward})">▶ ስራውን ጀምር</button>
-                <h4>${title}</h4>
-                <p>አይነት፡ ${platform} | ክፍያ፡ <span style="color: #28a745; font-weight: bold;">${reward.toFixed(2)} ብር</span> | በጀት፡ ${budget.toFixed(2)} ብር</p>
-                <a href="${link}" target="_blank" style="color: #007bff; text-decoration: none;">ታስኩን ለመክፈት እዚህ ይጫኑ</a>
-                <div class="timer-display" style="display: none;">ቀሪ ሰዓት፡ <span>${duration}</span> ሰከንድ...</div>
-            </div>
-        `;
-
-        document.getElementById("adListContainer").insertAdjacentHTML('beforeend', adCardHtml);
-        
-        // ወደ Google Sheets በራስ-ሰር መላክ
-        sendDataToGoogleSheets(title, link, platform, reward, budget);
-        document.getElementById("adForm").reset();
-}
-
-// // የጎግል አፕስ ስክሪፕት ዋናው ሊንክህ
-const GOOGLE_SCRIPT_URL = "https://google.com";
-
-function startAdTimer(button, duration, adId, reward) {
-    button.disabled = true;
-    let card = document.getElementById(adId);
-    let timerContainer = card.querySelector(".timer-display");
-    let timerSpan = timerContainer.querySelector("span");
-
-    timerContainer.style.display = "block";
-    let timeLeft = duration;
-    timerSpan.innerText = timeLeft;
-
-    let countdown = setInterval(function() {
-        timeLeft--;
-        timerSpan.innerText = timeLeft;
-
-        if (timeLeft <= 0) {
-            clearInterval(countdown);
-            timerContainer.innerText = "✅ ታስቦ በባንክ ሂሳብዎ ገብቷል!";
-
-            // ቪዲዮው ሲያልቅ ለሰራተኛው በራስ-ሰር በሺቱ ላይ ብር መደመሪያ
-            saveWorkerEarningToSheets(adId, reward);
-        }
-    }, 1000);
-}
-
-// 1. አዲስ ማስታወቂያ ወደ ጎግል ሺት የሚልክ ፋንክሽን
-function sendDataToGoogleSheets(title, url, platform, reward, budget) {
-    const postData = {
-        action: "postAd",
-        title: title,
-        url: url,
-        platform: platform,
-        reward: reward,
-        budget: budget
-    };
-
-    fetch(GOOGLE_SCRIPT_URL, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(postData)
-    })
-    .then(() => {
-        alert("ማስታወቂያው በተሳካ ሁኔታ ተለጥፏል! የ10% ኮሚሽን ታስቦ በጎግል ሺት ላይ በራስ-ሰር ሰፍሯል።");
-    })
-    .catch(err => console.error("Error sending to sheets:", err));
-}
-
-// 2. ሰራተኛው አይቶ ሲጨርስ ወደ ጎግል ሺት የሚልክ ፋንክሽን
-function saveWorkerEarningToSheets(taskId, reward) {
-    const postData = {
-        action: "completeTask",
-        taskId: taskId,
-        reward: reward
-    };
-
-    fetch(GOOGLE_SCRIPT_URL, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(postData)
-    })
-    .then(() => {
-        console.log("ክፍያው በሺቱ ላይ በራስ-ሰር ተመዝግቧል!");
-    })
-    .catch(err => console.error("Error saving earning:", err));
-}
-</script>
-</body>
