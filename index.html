@@ -21,7 +21,67 @@
     </style>
 </head>
 <body>
+<!-- 0. የተጠቃሚዎች መግቢያ እና መመዝገቢያ ሳጥን -->
+<div class="section" id="authSection" style="margin-bottom: 20px; background: white; padding: 15px; border-radius: 8px;">
+    <h3 id="authTitle">ወደ አካውንትዎ ይግቡ (Login)</h3>
+    <form id="loginForm" onsubmit="handleLogin(event)">
+        <input type="text" id="loginUsername" placeholder="ዩዘርኔም (Username)" required style="margin-bottom: 10px; width: 90%; padding: 8px;"><br>
+        <input type="password" id="loginPassword" placeholder="ፓስወርድ (Password)" required style="margin-bottom: 10px; width: 90%; padding: 8px;"><br>
+        <button type="submit" class="btn-post">አሁን ይግቡ</button>
+    </form>
+    <form id="registerForm" onsubmit="handleRegister(event)" style="display: none;">
+        <input type="text" id="regUsername" placeholder="አዲስ ዩዘርኔም (Username)" required style="margin-bottom: 10px; width: 90%; padding: 8px;"><br>
+        <input type="text" id="regPhone" placeholder="የስልክ ቁጥር (Phone)" required style="margin-bottom: 10px; width: 90%; padding: 8px;"><br>
+        <input type="password" id="regPassword" placeholder="ፓስወርድ (Password)" required style="margin-bottom: 10px; width: 90%; padding: 8px;"><br>
+        <button type="submit" class="btn-post" style="background: #28a745;">አሁን ተመዝገብ</button>
+    </form>
+    <p style="margin-top: 15px; font-size: 13px;">
+        <a href="javascript:void(0)" id="toggleAuthLink" onclick="toggleAuth(true)">አዲስ አካውንት ለመክፈት እዚህ ይጫኑ</a>
+    </p>
+</div>
 
+<script>
+function toggleAuth(showRegister) {
+    const loginForm = document.getElementById("loginForm");
+    const registerForm = document.getElementById("registerForm");
+    const authTitle = document.getElementById("authTitle");
+    const toggleLink = document.getElementById("toggleAuthLink");
+    if (showRegister) {
+        loginForm.style.display = "none";
+        registerForm.style.display = "block";
+        authTitle.innerText = "አዲስ አካውንት መክፈቻ (Register)";
+        toggleLink.innerText = "አካውንት አለዎት? ይግቡ (Login)";
+        toggleLink.setAttribute("onclick", "toggleAuth(false)");
+    } else {
+        loginForm.style.display = "block";
+        registerForm.style.display = "none";
+        authTitle.innerText = "ወደ አካውንትዎ ይግቡ (Login)";
+        toggleLink.innerText = "አዲስ አካውንት ለመክፈት እዚህ ይጫኑ";
+        toggleLink.setAttribute("onclick", "toggleAuth(true)");
+    }
+}
+function handleRegister(event) {
+    event.preventDefault();
+    const user = document.getElementById("regUsername").value;
+    const phone = document.getElementById("regPhone").value;
+    const pass = document.getElementById("regPassword").value;
+    fetch(GOOGLE_SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "register", username: user, phone: phone, password: pass })
+    }).then(() => {
+        alert("ምዝገባው ተሳክቷል! አሁን መግባት ይችላሉ።");
+        toggleAuth(false);
+    });
+}
+function handleLogin(event) {
+    event.preventDefault();
+    const user = document.getElementById("loginUsername").value;
+    localStorage.setItem("ethioTasksUser", user);
+    document.getElementById("authSection").innerHTML = `<h3>እንኳን ደህና መጡ፣ <b>${user}</b> 👋</h3><p>አሁን ማስታወቂያ መለጠፍና መስራት ይችላሉ።</p>`;
+}
+</script>
 <div class="main-container">
     <header>
         <h1>EthioTasks (ኢትዮታስክስ)</h1>
