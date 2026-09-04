@@ -3,79 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EthioTasks - ኢትዮታስክስ የማስታወቂያ እና የኮሚሽን መድረክ</title>
+    <title>EthioTasks - ማስታወቂያዎችን በነፃ ያስተዋውቁ</title>
     <style>
-        body { font-family: Sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; text-align: center; }
-        .main-container { max-width: 600px; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .header { background: #ff9900; color: white; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
-        .section { border: 1px solid #ddd; padding: 15px; margin: 15px 0; border-radius: 8px; background: #fafbfc; text-align: left; }
-        input, select { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
-        .btn-post { background: #ff9900; color: white; border: none; padding: 12px; border-radius: 5px; cursor: pointer; width: 100%; font-size: 16px; font-weight: bold; }
-        .ad-card { border-left: 5px solid #28a745; background: #eef5ff; padding: 15px; margin: 10px 0; border-radius: 4px; text-align: left; }
+        body { font-family: sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; text-align: center; }
+        .main-container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        header { background: #ff9800; color: white; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+        .section { border: 1px solid #ddd; padding: 15px; margin: 15px 0; border-radius: 8px; background: #fafafa; text-align: left; }
+        input, select, button { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        .btn-post { background: #ff9800; color: white; border: none; padding: 12px; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: bold; }
+        .ad-card { border-left: 5px solid #28a745; background: #eef9f0; padding: 12px; margin: 12px 0; border-radius: 4px; text-align: left; }
         .btn-watch { background: #28a745; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; }
         .dashboard-grid { display: flex; justify-content: space-between; margin-top: 20px; }
-        .db-box { width: 48%; padding: 15px; border-radius: 6px; text-align: center; color: white; font-weight: bold; }
-        .camilo { background: #17a2b8; }
-        .yilik { background: #28a745; }
-        .counter { font-size: 22px; display: block; margin-top: 5px; }
-        .pay-btn { display: inline-block; background: #0088cc; color: white; text-decoration: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; margin-top: 10px; text-align: center; width: 93%; }
+        .db-box { width: 48%; padding: 15px; border-radius: 8px; text-align: center; color: white; font-weight: bold; }
+        .bg-blue { background: #17a2b8; }
+        .bg-green { background: #28a745; }
+        .timer-display { font-size: 12px; color: #ff5722; font-weight: bold; margin-top: 5px; }
     </style>
 </head>
 <body>
 
 <div class="main-container">
-    <div class="header">
-        <h2>EthioTasks (ኢትዮታስክስ)</h2>
-        <p>ማስታወቂያዎችን በነፃ ይለጥፉ፣ ከእይታዎች በኮሚሽን ክፍያ ያግኙ!</p>
-    </div>
+    <header>
+        <h1>EthioTasks (ኢትዮታስክስ)</h1>
+        <p>ማስታወቂያዎችን በማስተዋወቅ ገቢ የሚያገኙበት መድረክ</p>
+    </header>
 
-    <!-- 1. ማስታወቂያ መለጠፊያ ፎርም -->
+    <!-- 1. አዲስ ማስታወቂያ ማውጫ -->
     <div class="section">
         <h3>➕ አዲስ ማስታወቂያ መለጠፊያ (ፎርም)</h3>
         <form id="adForm" onsubmit="postAdAutomatically(event)">
-            <input type="text" id="adTitleInput" placeholder="የማስታወቂያው ርዕስ (ለምሳሌ፡ የቪዲዮ አፕ)" required>
-            <input type="url" id="adLinkInput" placeholder="የቪዲዮ ወይም የማስታወቂያ ሊንክ (URL)" required>
-            <select id="adPlatform">
-                <option value="YouTube">YouTube (ዩቲዩብ)</option>
-                <option value="TikTok">TikTok (ቲክቶክ)</option>
-                <option value="Telegram">Telegram (ቴሌግራም ቻናል/ቦት)</option>
+            <input type="text" id="adTitleInput" placeholder="የማስታወቂያው ርዕስ (ለምሳሌ፡ የእኔ ቻናል)" required>
+            <input type="url" id="adLinkInput" placeholder="የማስታወቂያው ወይም የቻናሉ ሊንክ (URL)" required>
+            
+            <select id="adPlatform" required>
+                <option value="" disabled selected>የሶሻል ሚዲያ አይነት ይምረጡ</option>
+                <option value="YouTube ሰብስክራይብ">YouTube ሰብስክራይብ</option>
+                <option value="YouTube ቪዲዮ እይታ">YouTube ቪዲዮ እይታ</option>
+                <option value="YouTube ኮሜንት መጻፍ">YouTube ኮሜንት መጻፍ</option>
+                <option value="TikTok ፎሎው ማድረጊያ">TikTok ፎሎው ማድረጊያ</option>
+                <option value="TikTok ቪዲዮ እይታ">TikTok ቪዲዮ እይታ</option>
+                <option value="Telegram ቻናል ጆይን">Telegram ቻናል ጆይን</option>
+                <option value="Telegram 사이ት መጎብኘት">Telegram ሳይት መጎብኘት</option>
             </select>
-            <input type="number" id="adBudgetInput" placeholder="ለማስታወቂያው የተመደበ በጀት ($)" step="0.01" required>
-            <button type="submit" class="btn-post">🚀 ማስታወቂያውን በነፃ ልጥፍ</button>
-        </form>
 
-        <!-- የክፍያ መመሪያ እና የቀጥታ ቴሌግራም ማገናኛ አዝራር -->
-        <div style="background-color: #fff9e6; padding: 15px; border-radius: 5px; margin-top: 15px; text-align: left; border: 1px solid #ffe0b2;">
-            <h4 style="color: #cc7a00; margin: 0 0 5px 0;">💳 የክፍያ መመሪያ (Payment Instruction)</h4>
-            <p style="margin: 0; font-size: 14px; color: #555;">ማስታወቂያዎ በራስ-ሰር እንዲጸድቅ እባክዎ የቪው (View) ክፍያውን በቴሌብር (telebirr) ወይም በባንክ ይላኩ። ከዚያ የክፍያ ደረሰኙን ስክሪንሻት ከታች ያለውን አዝራር በመጫን ለEthioTasks ማናጀር በቀጥታ ይልኩ።</p>
-            <a href="https://t.me" target="_blank" class="pay-btn">💬 ክፍያ ፈጽሜያለሁ (ደረሰኝ ላክ)</a>
-        </div>
+            <!-- የእርስዎ ሙሉ የዋጋ ዝርዝር (ከ0.10 ሳንቲም እስከ 100 ብር) -->
+            <select id="adRewardInput" required>
+                <option value="" disabled selected>ለአንድ ሰራተኛ የሚከፈለውን ዋጋ ይምረጡ</option>
+                <option value="0.10">0.10 ብር (10 ሳንቲም)</option>
+                <option value="0.20">0.20 ብር (20 ሳንቲም)</option>
+                <option value="0.25">0.25 ብር (25 ሳንቲም)</option>
+                <option value="0.30">0.30 ብር (30 ሳንቲም)</option>
+                <option value="0.50">0.50 ብር (50 ሳንቲም)</option>
+                <option value="1.00">1.00 ብር (1 ብር)</option>
+                <option value="15.00">15.00 ብር (15 ብር)</option>
+                <option value="50.00">50.00 ብር (50 ብር)</option>
+                <option value="100.00">100.00 ብር (100 ብር)</option>
+            </select>
+
+            <input type="number" id="adBudgetInput" placeholder="አጠቃላይ ለማስታወቂያው የተመደበ በጀት (በብር)" step="0.01" required>
+            <button type="submit" class="btn-post">🚀 ማስታወቂያውን አሁኑኑ ልቀቅ</button>
+        </form>
     </div>
 
-    <!-- 2. የሚታዩ ማስታወቂያዎች -->
+    <!-- 2. የክፍያ መመሪያ -->
+    <div class="section">
+        <h3>💳 የክፍያ መመሪያ (Payment Instruction)</h3>
+        <p style="font-size: 13px; color: #555;">ማስታወቂያው በራሱ እንዲነቃቃ ክፍያዎን በ<b>ቴሌብር (telebirr)</b> ወይም በባንክ ይፈጽሙ። የሰው ንክኪን ሙሉ በሙሉ ለማስቀረት ክፍያውን እንደፈጸሙ ከታች ያለውን ሊንክ በመጠቀም ደረሰኝዎን በChapa ወይም በክፍያ ቦታችን በኩል ያረጋግጡ።</p>
+        <a href="https://chapa.co" target="_blank"><button type="button" style="background: #007bff; color: white; font-weight: bold; width: 100%;">💳 ክፍያ ፈጽሜያለሁ (ክፍያ ማረጋገጫ ሊንክ)</button></a>
+    </div>
+
+    <!-- 3. የሚታዩ ማስታወቂያዎች -->
     <div class="section">
         <h3>📺 የሚታዩ ማስታወቂያዎች (ለሰራተኞች)</h3>
         <div id="adListContainer">
+            <!-- ናሙና ታስክ -->
             <div class="ad-card" id="sampleAd">
-                <button class="btn-watch" onclick="startAdTimer(this, 0.50, 'sampleAd')">▶️ ማየት ጀምር</button>
-                <h4>የቪዲዮ ማስታወቂያ</h4>
-                <p>በጀት: <span style="color:#28a745; font-weight:bold;">$0.50</span> | መድረክ: YouTube</p>
-                <div class="timer-display" style="color: #ffc107; font-weight: bold; margin-top: 5px;"></div>
+                <button class="btn-watch" onclick="startAdTimer(this, 10, 'sampleAd', 0.50)">▶ ማየት ጀምር</button>
+                <h4>የናሙና የዩቲዩብ ታስክ</h4>
+                <p>አይነት፡ YouTube ቪዲዮ እይታ | ክፍያ፡ <span style="color: #28a745; font-weight: bold;">0.50 ብር</span> | በጀት፡ 50.00 ብር</p>
+                <a href="#" target="_blank" style="color: #007bff; text-decoration: none;">ቪዲዮውን ለመክፈት እዚህ ይጫኑ</a>
+                <div class="timer-display" style="display: none;">ቀሪ ሰዓት፡ <span>10</span> ሰከንድ...</div>
             </div>
         </div>
     </div>
 
-    <!-- 3. የአስተዳዳሪ ሰሌዳ -->
+    <!-- 4. ዋና የቁጥጥር ሰሌዳ -->
     <div class="section">
         <h3>📊 ዋና የቁጥጥር ሰሌዳ (Admin Dashboard)</h3>
         <div class="dashboard-grid">
-            <div class="db-box min-views" style="background-color: #17a2b8;">
-                የእይታ ቁጥጥር
-                <span id="camiloViews" class="counter">0</span>
+            <div class="db-box bg-blue">
+                <p>የእይታ ቁጥር</p>
+                <h2 id="totalVerifiedViews">0</h2>
             </div>
-            <div class="db-box ethio-comm" style="background-color: #28a745;">
-                የእርስዎ ኮሚሽን (10%)
-                <span id="yilikCommission" class="counter">$0.00</span>
+            <div class="db-box bg-green">
+                <p>የእርስዎ ኮሚሽን (10%)</p>
+                <h2 id="totalCommission">0.00 ብር</h2>
             </div>
         </div>
     </div>
@@ -84,51 +106,96 @@
 <script>
     let totalVerifiedViews = 0;
     let totalOwnerCommission = 0.00;
-    const commissionPercent = 0.10; // 10% ኮሚሽን
+    const commissionPercent = 0.10; // የእርስዎ 10% ኮሚሽን
 
     function postAdAutomatically(event) {
         event.preventDefault();
+        
         let title = document.getElementById("adTitleInput").value;
         let link = document.getElementById("adLinkInput").value;
         let platform = document.getElementById("adPlatform").value;
+        let reward = parseFloat(document.getElementById("adRewardInput").value);
         let budget = parseFloat(document.getElementById("adBudgetInput").value);
         let adId = "ad_" + Date.now();
 
+        // እንደ ዋጋው መጠን የሴኮንድ ቆይታን በራስ-ሰር መወሰን (የበለጠ ዋጋ ላለው ረዘም ያለ ሰከንድ)
+        let duration = 15;
+        if (reward <= 0.25) duration = 10;
+        else if (reward === 0.50) duration = 15;
+        else if (reward === 1.00) duration = 30;
+        else if (reward >= 15.00) duration = 60;
+
         let adCardHtml = `
             <div class="ad-card" id="${adId}">
-                <button class="btn-watch" onclick="startAdTimer(this, ${budget}, '${adId}')">▶️ ማየት ጀምር</button>
+                <button class="btn-watch" onclick="startAdTimer(this, ${duration}, '${adId}', ${reward})">▶ ስራውን ጀምር</button>
                 <h4>${title}</h4>
-                <p>በጀት: <span style="color:#28a745; font-weight:bold;">$${budget.toFixed(2)}</span> | መድረክ: ${platform}</p>
-                <p><a href="${link}" target="_blank" style="color: #007bff; text-decoration: none;">🔗 ማስታወቂያውን እዚህ ይክፈቱ</a></p>
-                <div class="timer-display" style="color: #ffc107; font-weight: bold; margin-top: 5px;"></div>
+                <p>አይነት፡ ${platform} | ክፍያ፡ <span style="color: #28a745; font-weight: bold;">${reward.toFixed(2)} ብር</span> | በጀት፡ ${budget.toFixed(2)} ብር</p>
+                <a href="${link}" target="_blank" style="color: #007bff; text-decoration: none;">ታስኩን ለመክፈት እዚህ ይጫኑ</a>
+                <div class="timer-display" style="display: none;">ቀሪ ሰዓት፡ <span>${duration}</span> ሰከንድ...</div>
             </div>
         `;
+
         document.getElementById("adListContainer").insertAdjacentHTML('beforeend', adCardHtml);
+        
+        // ወደ Google Sheets መረጃ ለመላክ
+        sendDataToGoogleSheets(title, link, platform, reward, budget);
+
         document.getElementById("adForm").reset();
-        alert("ማስታወቂያዎ በተሳካ ሁኔታ በ EthioTasks ተመዝግቧል! ክፍያዎ ሲረጋገጥ ወዲያውኑ ወደ ስራ ይገባል።");
+        alert("ማስታወቂያዎ በተሳካ ሁኔታ ተመዝግቧል! ክፍያዎ ሲረጋገጥ ለሰራተኞች በራስ-ሰር ይለቀቃል።");
     }
 
-    function startAdTimer(button, budget, adId) {
+    function startAdTimer(button, duration, adId, reward) {
         button.disabled = true;
-        let timerDisplay = document.getElementById(adId).querySelector(".timer-display");
-        let timeLeft = 10;
+        let card = document.getElementById(adId);
+        let timerContainer = card.querySelector(".timer-display");
+        let timerSpan = timerContainer.querySelector("span");
+        
+        timerContainer.style.display = "block";
+        let timeLeft = duration;
+        timerSpan.innerText = timeLeft;
 
         let countdown = setInterval(function() {
             timeLeft--;
-            timerDisplay.innerText = `⏱️ እባክዎ ይጠብቁ: ${timeLeft} ሰከንድ`;
+            timerSpan.innerText = timeLeft;
+            
             if (timeLeft <= 0) {
                 clearInterval(countdown);
-                timerDisplay.innerText = "✅ እይታው ተረጋግጧል!";
+                timerContainer.innerText = "✅ ታስኩ በተሳካ ሁኔታ ተጠናቋል!";
+                
                 totalVerifiedViews++;
-                document.getElementById("camiloViews").innerText = totalVerifiedViews;
-
-                let earnedCommission = budget * commissionPercent;
-                totalOwnerCommission += earnedCommission;
-                document.getElementById("yilikCommission").innerText = "$" + totalOwnerCommission.toFixed(2);
+                document.getElementById("totalVerifiedViews").innerText = totalVerifiedViews;
+                
+                let currentCommission = reward * commissionPercent;
+                totalOwnerCommission += currentCommission;
+                document.getElementById("totalCommission").innerText = totalOwnerCommission.toFixed(2) + " ብር";
+                
+                let workerEarnings = reward - currentCommission;
+                
+                // የተጠናቀቀውን ታስክ ወደ Google Sheet መመዝገብ
+                saveWorkerEarningToSheets(adId, workerEarnings, currentCommission);
             }
         }, 1000);
+    }
+
+    function sendDataToGoogleSheets(title, link, platform, reward, budget) {
+        const webAppUrl = "የእርስዎ_የጉግል_ሺት_ዌብ_አፕ_ሊንክ_እዚህ ይግባ";
+        fetch(webAppUrl, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "createAd", title: title, link: link, platform: platform, reward: reward, budget: budget })
+        }).catch(err => console.log("Error sending to sheets:", err));
+    }
+
+    function saveWorkerEarningToSheets(adId, workerEarnings, commission) {
+        const webAppUrl = "የእርስዎ_የጉግል_ሺት_ዌብ_አፕ_ሊንክ_እዚህ ይግባ";
+        fetch(webAppUrl, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "saveEarning", adId: adId, workerEarnings: workerEarnings, commission: commission })
+        }).catch(err => console.log("Error saving earning:", err));
     }
 </script>
 
 </body>
-</html>
