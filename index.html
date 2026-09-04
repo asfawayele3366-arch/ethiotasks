@@ -133,16 +133,40 @@ function submitAdvertisement(event) {
     if (loggedInUser === "admin") {
         adData.totalBudget = 0;
         sendAdToGoogleSheets(adData);
-    } else {
-        // ለሌላ ተጠቃሚ ከሆነ 10% ኮሚሽኑን በራስ-ሰር ያሰላል
+    } else {// 1. የሲስተሙን 10% ኮሚሽን በራስ-ሰር ያሰላል
         const commission = totalBudget * 0.10;
-        const finalPayable = totalBudget + commission;
+        // 2. ዋናውን በጀት እና የ10% ኮሚሽኑን ደምሮ ጠቅላላ የሚከፈለውን ሂሳብ ያወጣል
+        const finalAmount = totalBudget + commission;
         
-        if (confirm(`የማስታወቂያ በጀት፦ ${totalBudget} ብር\nየሲስተም 10% ኮሚሽን፦ ${commission} ብር\nአጠቃላይ ክፍያ፦ ${finalPayable} ብር\n\nክፍያውን በራስ-ሰር ፈጽመው ለመለጠፍ እሺ ይበሉ?`)) {
-            sendAdToGoogleSheets(adData);
-        }
-    }
-}
+        // 3. የ Chapa አውቶማቲክ ክፍያ መግቢያን (API) በራሱ ጊዜ ይከፍታል
+        fetch("https://chapa.co", {
+            method: "POST",
+            headers: {
+                "Authorization": "Bearer CHAPUBK_TEST-NlxmzDY4AG4knODa7ixDGJp6xwH3JXYs", 
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                amount: finalAmount,
+                currency: "ETB",
+                email: "user@ethiotasks.com",
+                tx_ref: taskId, // ክፍያውን ከ Task ID ጋር ያያይዘዋል
+                callback_url: "https://github.io", // ክፍያው ሲያልቅ ተጠቃሚው የሚመለስበት ገጽ
+                customization: { 
+                    title: "EthioTasks Ad Payment", 
+                    description: "የ 10% የሲስተም ኮሚሽን ተጨምሯል" 
+                }
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "success" || data.data) {
+                // ማስታወቂያ አስነጋሪውን በቀጥታ ወደ ቻፓ የቴሌብር/ባንክ መክፈያ ገጽ ይወስደዋል!
+                window.location.href = data.data.checkout_url;
+            } else {
+                alert("የክፍያ ሲስተሙን መክፈት አልተቻለም። እባክዎ መረጃውን ያረጋግጡ።");
+            }
+        })
+        .catch(error => alert("በክፍያ ሂደት ላይ ስህተት ተከስቷል!"));
 
 function sendAdToGoogleSheets(adData) {
     fetch(GOOGLE_SCRIPT_URL, {
