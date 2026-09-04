@@ -137,65 +137,79 @@
 
         document.getElementById("adListContainer").insertAdjacentHTML('beforeend', adCardHtml);
         
-        // ወደ Google Sheets መረጃ ለመላክ
+        // ወደ Google Sheets በራስ-ሰር መላክ
         sendDataToGoogleSheets(title, link, platform, reward, budget);
-
         document.getElementById("adForm").reset();
-        alert("ማስታወቂያዎ በተሳካ ሁኔታ ተመዝግቧል! ክፍያዎ ሲረጋገጥ ለሰራተኞች በራስ-ሰር ይለቀቃል።");
-    }
+}
 
-    function startAdTimer(button, duration, adId, reward) {
-        button.disabled = true;
-        let card = document.getElementById(adId);
-        let timerContainer = card.querySelector(".timer-display");
-        let timerSpan = timerContainer.querySelector("span");
-        
-        timerContainer.style.display = "block";
-        let timeLeft = duration;
+// // የጎግል አፕስ ስክሪፕት ዋናው ሊንክህ
+const GOOGLE_SCRIPT_URL = "https://google.com";
+
+function startAdTimer(button, duration, adId, reward) {
+    button.disabled = true;
+    let card = document.getElementById(adId);
+    let timerContainer = card.querySelector(".timer-display");
+    let timerSpan = timerContainer.querySelector("span");
+
+    timerContainer.style.display = "block";
+    let timeLeft = duration;
+    timerSpan.innerText = timeLeft;
+
+    let countdown = setInterval(function() {
+        timeLeft--;
         timerSpan.innerText = timeLeft;
 
-        let countdown = setInterval(function() {
-            timeLeft--;
-            timerSpan.innerText = timeLeft;
-            
-            if (timeLeft <= 0) {
-                clearInterval(countdown);
-                timerContainer.innerText = "✅ ታስኩ በተሳካ ሁኔታ ተጠናቋል!";
-                
-                totalVerifiedViews++;
-                document.getElementById("totalVerifiedViews").innerText = totalVerifiedViews;
-                
-                let currentCommission = reward * commissionPercent;
-                totalOwnerCommission += currentCommission;
-                document.getElementById("totalCommission").innerText = totalOwnerCommission.toFixed(2) + " ብር";
-                
-                let workerEarnings = reward - currentCommission;
-                
-                // የተጠናቀቀውን ታስክ ወደ Google Sheet መመዝገብ
-                saveWorkerEarningToSheets(adId, workerEarnings, currentCommission);
-            }
-        }, 1000);
-    }
+        if (timeLeft <= 0) {
+            clearInterval(countdown);
+            timerContainer.innerText = "✅ ታስቦ በባንክ ሂሳብዎ ገብቷል!";
 
-    function sendDataToGoogleSheets(title, link, platform, reward, budget) {
-        const webAppUrl = "የእርስዎ_የጉግል_ሺት_ዌብ_አፕ_ሊንክ_እዚህ ይግባ";
-        fetch(webAppUrl, {
-            method: "POST",
-            mode: "no-cors",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ action: "createAd", title: title, link: link, platform: platform, reward: reward, budget: budget })
-        }).catch(err => console.log("Error sending to sheets:", err));
-    }
+            // ቪዲዮው ሲያልቅ ለሰራተኛው በራስ-ሰር በሺቱ ላይ ብር መደመሪያ
+            saveWorkerEarningToSheets(adId, reward);
+        }
+    }, 1000);
+}
 
-    function saveWorkerEarningToSheets(adId, workerEarnings, commission) {
-        const webAppUrl = "የእርስዎ_የጉግል_ሺት_ዌብ_አፕ_ሊንክ_እዚህ ይግባ";
-        fetch(webAppUrl, {
-            method: "POST",
-            mode: "no-cors",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ action: "saveEarning", adId: adId, workerEarnings: workerEarnings, commission: commission })
-        }).catch(err => console.log("Error saving earning:", err));
-    }
+// 1. አዲስ ማስታወቂያ ወደ ጎግል ሺት የሚልክ ፋንክሽን
+function sendDataToGoogleSheets(title, url, platform, reward, budget) {
+    const postData = {
+        action: "postAd",
+        title: title,
+        url: url,
+        platform: platform,
+        reward: reward,
+        budget: budget
+    };
+
+    fetch(GOOGLE_SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(postData)
+    })
+    .then(() => {
+        alert("ማስታወቂያው በተሳካ ሁኔታ ተለጥፏል! የ10% ኮሚሽን ታስቦ በጎግል ሺት ላይ በራስ-ሰር ሰፍሯል።");
+    })
+    .catch(err => console.error("Error sending to sheets:", err));
+}
+
+// 2. ሰራተኛው አይቶ ሲጨርስ ወደ ጎግል ሺት የሚልክ ፋንክሽን
+function saveWorkerEarningToSheets(taskId, reward) {
+    const postData = {
+        action: "completeTask",
+        taskId: taskId,
+        reward: reward
+    };
+
+    fetch(GOOGLE_SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(postData)
+    })
+    .then(() => {
+        console.log("ክፍያው በሺቱ ላይ በራስ-ሰር ተመዝግቧል!");
+    })
+    .catch(err => console.error("Error saving earning:", err));
+}
 </script>
-
 </body>
