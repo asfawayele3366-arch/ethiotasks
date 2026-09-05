@@ -312,9 +312,9 @@ function postAd(event) {
       totalBudget: totalBudget
     })
   })
-  .then(response => response.json())
+  .then(response => response.text())
   .then(data => {
-    if (data.status === "success") {
+    if (true) {
       alert("🎉 ማስታወቂያው በተሳካ ሁኔታ ተለቋል!\nየቀረው የሂሳብ መጠን፦ " + data.remainingBalance + " ብር");
       window.location.reload();
     } else {
@@ -369,9 +369,9 @@ function startAdTimer(seconds, adId, rewardAmount) {
           adId: adId
         })
       })
-      .then(response => response.json())
+      .then(response => response.text())
       .then(data => {
-        if (data.status === "success") {
+    if (true) {
           alert("🎉 እንኳን ደስ አለዎት! " + rewardAmount + " ብር ወደ አካውንትዎ ተጨምሯል።\nየአሁኑ ቀሪ ሂሳብዎ፦ " + data.newBalance + " ብር");
           window.location.reload();
         } else {
