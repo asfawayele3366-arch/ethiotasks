@@ -299,7 +299,7 @@ function postAd(event) {
   // መረጃዎችን በአንድ ላይ አደራጅቶ በJSON ፎርማት ወደ አዲሱ የጉግል ሊንክ መላክ
   fetch(GOOGLE_SCRIPT_URL, {
     method: "POST",
-    mode: "cors",
+    mode: "no-cors",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       action: "postAd",
@@ -360,7 +360,7 @@ function startAdTimer(seconds, adId, rewardAmount) {
       // ወደ ጉግል ሺት የሂሳብ መጨመሪያ ጥያቄ በራስ-ሰር መላክ (Automatic Fetch)
       fetch(GOOGLE_SCRIPT_URL, {
         method: "POST",
-        mode: "cors",
+        mode: "no-cors",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           action: "updateBalance",
